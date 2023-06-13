@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (4.9.1)
+  - OCMock (2.0.1)
+
+DEPENDENCIES:
+  - Alamofire
+  - OCMock (~> 2.0.1)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - OCMock
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  OCMock: 7a839b55abfb78e8ec3bf6eaa3cdcc567ac71d2a
+
+PODFILE CHECKSUM: 888abc211653c7ee2d1b986641937a3314f8395c
+
+COCOAPODS: 1.12.1
