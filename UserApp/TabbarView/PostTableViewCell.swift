@@ -13,27 +13,33 @@ class PostTableViewCell: UITableViewCell {
     
     @IBOutlet weak var lbBody: UILabel!
     
-    @IBOutlet weak var comment: UIStackView!
+    var delegate: PostCellDelegate?
     
-    var showCommentAction : (() -> Void)? = nil
+    @IBAction func btComment(_ sender: UIButton) {
+        if let delegate = delegate {
+            delegate.cellCommentButtonTapped(cell: self)
+        }
+    }
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.commentClick))
-        self.comment.addGestureRecognizer(gesture)
-        self.comment.isUserInteractionEnabled = true
     }
     
     @objc func commentClick(sender: UITapGestureRecognizer) {
-        if let commentClick = self.showCommentAction {
-            commentClick()
+        if let delegate = delegate {
+            delegate.cellCommentButtonTapped(cell: self)
         }
-        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
+    func setUpCell(post: PostModel){
+        lbTitle.text = post.title
+        lbBody.text = post.body
+    }
+    
 }
+

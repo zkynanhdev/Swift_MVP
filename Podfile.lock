@@ -1,20 +1,24 @@
 PODS:
-  - Alamofire (4.9.1)
+  - Alamofire (5.7.1)
+  - ImageLoader (0.15.0)
   - OCMock (2.0.1)
 
 DEPENDENCIES:
   - Alamofire
+  - ImageLoader (~> 0.15)
   - OCMock (~> 2.0.1)
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - ImageLoader
     - OCMock
 
 SPEC CHECKSUMS:
-  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  ImageLoader: e0635d52020d64dc7687e3a3b14dc53212ac0442
   OCMock: 7a839b55abfb78e8ec3bf6eaa3cdcc567ac71d2a
 
-PODFILE CHECKSUM: 888abc211653c7ee2d1b986641937a3314f8395c
+PODFILE CHECKSUM: 4a6658e0c2348cc889ebc454fcde9913f4bc9ab3
 
 COCOAPODS: 1.12.1

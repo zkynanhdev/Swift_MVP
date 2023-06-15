@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ImageLoader
 
 class AlbumDetailCell: UICollectionViewCell {
 
@@ -16,6 +17,11 @@ class AlbumDetailCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.image.layer.cornerRadius = 10
+    }
+    
+    func setUpCell(album: AlbumDetailModel) {
+        title.text = album.title
+        image.load.request(with: album.url ?? "")
     }
 
 }

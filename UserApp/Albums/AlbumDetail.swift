@@ -47,29 +47,20 @@ class AlbumDetail: UIViewController {
     }
     
     func getAlbumDetails(){
-        Alamofire.request("https://jsonplaceholder.typicode.com/photos?albumId=\(self.albumId ?? 0)",method: .get, encoding: JSONEncoding.default)
-            .validate(statusCode: 200 ..< 299).responseData {
-                response in
-                switch response.result {
-                case .success(let data):
-                        let decoder = JSONDecoder()
-                        do {
-                            self.albumDetails = try decoder.decode([AlbumDetailModel].self, from: data)
-                            if(self.albumDetails.isEmpty){
-                                print("Not found Data")
-                                self.hideSpinnner()
-                            }else{
-                                self.collectionVC.reloadData()
-                                self.hideSpinnner()
-                            }
-                        } catch {
-                            print(error.localizedDescription)
-                            self.hideSpinnner()
-                        }
-                case .failure(let error):
-                    print(error)
+        AlbumProviderImpl().getAlbumsDetail(albumId: self.albumId ?? -1) {
+            data, status, message in
+            if status == .success {
+                self.albumDetails = data as! [AlbumDetailModel]
+                if self.albumDetails.isEmpty {
+                    print("Not found Data")
+                } else {
+                    self.collectionVC.reloadData()
                 }
+            } else {
+                print(message)
             }
+            self.hideSpinnner()
+        }
     }
 }
 
@@ -83,9 +74,7 @@ extension AlbumDetail: UICollectionViewDelegate, UICollectionViewDataSource{
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumDetailCell
         
-        let item = albumDetails[indexPath.row]
-        cell.title.text = item.title
-        cell.image.load(url: item.url ?? "")
+        cell.setUpCell(album: albumDetails[indexPath.row])
         
         return cell
     }
@@ -118,20 +107,4 @@ extension AlbumDetail: UICollectionViewDelegateFlowLayout{
 
 }
 
-extension UIImageView{
-    func load(url: String) {
-        guard let url = URL(string: url) else {
-                    return
-                }
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-}
 

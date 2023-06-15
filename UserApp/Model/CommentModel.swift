@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CommentsModel: Codable {
+class CommentModel: Codable {
     var postId: Int
     var id: Int
     var name: String

@@ -24,4 +24,9 @@ class UserTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func setUpCell(id: Int?, name: String?) {
+        lbID.text = id?.description
+        lbName.text = name
+    }
+    
 }

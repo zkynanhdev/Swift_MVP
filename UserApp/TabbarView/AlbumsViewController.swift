@@ -46,29 +46,20 @@ class AlbumsViewController: UIViewController {
     }
     
     func getListAlbums(userId: Int) {
-        Alamofire.request("https://jsonplaceholder.typicode.com/albums?userId=\(userId)",method: .get, encoding: JSONEncoding.default)
-            .validate(statusCode: 200 ..< 299).responseData {
-                response in
-                switch response.result {
-                case .success(let data):
-                    let decoder = JSONDecoder()
-                        do {
-                            self.albums = try decoder.decode([AlbumModel].self, from: data)
-                            if(self.albums.isEmpty){
-                                print("Not found Data")
-                                self.hideSpinnner()
-                            }else{
-                                self.tableview.reloadData()
-                                self.hideSpinnner()
-                            }
-                        } catch {
-                                print(error.localizedDescription)
-                                self.hideSpinnner()
-                        }
-                case .failure(let error):
-                    print(error)
+        AlbumProviderImpl().getAlbums(id: userId) {
+            data, status, message in
+            if status == .success {
+                self.albums = data as! [AlbumModel]
+                if self.albums.isEmpty {
+                    print("Not found Data")
+                } else {
+                    self.tableview.reloadData()
                 }
+            } else {
+                print(message)
             }
+            self.hideSpinnner()
+        }
     }
 
 }
@@ -85,8 +76,8 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserTableViewCell
-        cell.lbID.text = albums[indexPath.row].id.description
-        cell.lbName.text = albums[indexPath.row].title
+        cell.setUpCell(id: albums[indexPath.row].id, name: albums[indexPath.row].title)
+        
         return cell
     }
     

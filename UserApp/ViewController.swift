@@ -52,23 +52,19 @@ class ViewController: UIViewController {
     
     
     func getListUser(){
-        Alamofire.request("https://jsonplaceholder.typicode.com/users",method: .get, encoding: JSONEncoding.default)
-            .validate(statusCode: 200 ..< 299).responseData {
-                response in
-                switch response.result {
-                case .success(let data):
-                        let decoder = JSONDecoder()
-                        do {
-                            self.users = try decoder.decode([UserModel].self, from: data)
-                            self.tableView.reloadData()
-                            self.hideSpinnner()
-                        } catch {
-                            print(error.localizedDescription)
-                        }
-                case .failure(let error):
-                    print(error)
+        UserProviderImpl().getUsers() { data, status, message in
+            if status == .success {
+                self.users = data as! [UserModel]
+                if  self.users.isEmpty {
+                    print("Data not found")
+                } else {
+                    self.tableView.reloadData()
                 }
+            } else {
+                print(message)
             }
+            self.hideSpinnner()
+        }
     }
 
 
@@ -86,8 +82,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserTableViewCell
-        cell.lbID.text = users[indexPath.row].id.description
-        cell.lbName.text = users[indexPath.row].name
+        cell.setUpCell(id: users[indexPath.row].id, name: users[indexPath.row].name)
         return cell
     }
     

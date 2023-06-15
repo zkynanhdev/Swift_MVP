@@ -1,8 +1,9 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 inhibit_all_warnings!
 
 target 'UserApp' do
   pod 'Alamofire'
+  pod 'ImageLoader', '~> 0.15'
 
   target 'UserAppTests' do
     inherit! :search_paths

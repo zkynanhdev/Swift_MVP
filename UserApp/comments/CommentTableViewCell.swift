@@ -23,4 +23,10 @@ class CommentTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
+    func setUpView(comment: CommentModel){
+        lbName.text = comment.name
+        lbEmail.text = comment.email
+        lbBody.text = comment.body
+    }
+    
 }

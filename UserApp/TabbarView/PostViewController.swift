@@ -45,30 +45,21 @@ class PostViewController: UIViewController {
     }
     
     
-    func getPosts(userId: Int){
-        Alamofire.request("https://jsonplaceholder.typicode.com/posts?userId=\(userId)",method: .get, encoding: JSONEncoding.default)
-            .validate(statusCode: 200 ..< 299).responseData {
-                response in
-                switch response.result {
-                case .success(let data):
-                    let decoder = JSONDecoder()
-                        do {
-                            self.posts = try decoder.decode([PostModel].self, from: data)
-                            if(self.posts.isEmpty){
-                                print("Not found Data")
-                                self.hideSpinnner()
-                            }else{
-                                self.tableView.reloadData()
-                                self.hideSpinnner()
-                            }
-                        } catch {
-                                print(error.localizedDescription)
-                                self.hideSpinnner()
-                        }
-                case .failure(let error):
-                    print(error)
+    func getPosts(userId: Int) {
+        PostProviderImpl().getPosts(id: userId) {
+            data, status, message in
+            if status == .success {
+                self.posts = data as! [PostModel]
+                if self.posts.isEmpty {
+                    print("Not found Data")
+                } else {
+                    self.tableView.reloadData()
                 }
+            } else {
+                print(message)
             }
+            self.hideSpinnner()
+        }
     }
 
 }
@@ -85,14 +76,10 @@ extension PostViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PostTableViewCell
-        cell.lbTitle.text = posts[indexPath.row].title
-        cell.lbBody.text = posts[indexPath.row].body
-        cell.showCommentAction = {
-            let commentVc = CommentsViewController()
-            commentVc.postId = self.posts[indexPath.row].id
-            self.present(commentVc, animated: true)
-            print("comment click")
-        }
+        
+        cell.setUpCell(post: posts[indexPath.row])
+        cell.delegate = self
+        
         return cell
     }
     
@@ -103,3 +90,15 @@ extension PostViewController: UITableViewDelegate, UITableViewDataSource{
 //        self.navigationController?.pushViewController(albumDetailVc, animated: true)
     }
 }
+
+extension PostViewController: PostCellDelegate {
+    func cellCommentButtonTapped(cell: PostTableViewCell) {
+        let indexPath = self.tableView.indexPath(for: cell)!
+        let commentVc = CommentsViewController()
+        commentVc.postId = self.posts[indexPath.row].id
+        self.present(commentVc, animated: true)
+    }
+    
+}
+
+

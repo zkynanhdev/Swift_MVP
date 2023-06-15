@@ -12,7 +12,7 @@ class CommentsViewController: UIViewController {
 
     @IBOutlet weak var tableview: UITableView!
     
-    var comments: [CommentsModel] = []
+    var comments: [CommentModel] = []
     
     var postId: Int = -1
     
@@ -44,29 +44,20 @@ class CommentsViewController: UIViewController {
     }
     
     func getComments(postId: Int){
-        Alamofire.request("https://jsonplaceholder.typicode.com/comments?postId=\(postId)",method: .get, encoding: JSONEncoding.default)
-            .validate(statusCode: 200 ..< 299).responseData {
-                response in
-                switch response.result {
-                case .success(let data):
-                    let decoder = JSONDecoder()
-                        do {
-                            self.comments = try decoder.decode([CommentsModel].self, from: data)
-                            if(self.comments.isEmpty){
-                                print("Not found Data")
-                                self.hideSpinnner()
-                            }else{
-                                self.tableview.reloadData()
-                                self.hideSpinnner()
-                            }
-                        } catch {
-                                print(error.localizedDescription)
-                                self.hideSpinnner()
-                        }
-                case .failure(let error):
-                    print(error)
+        CommentProviderImpl().getComments(id: postId) {
+            data, status, message in
+            if status == .success {
+                self.comments = data as! [CommentModel]
+                if self.comments.isEmpty {
+                    print("Not found Data")
+                } else {
+                    self.tableview.reloadData()
                 }
+            } else {
+                print(message)
             }
+            self.hideSpinnner()
+        }
     }
 
 }
@@ -83,9 +74,9 @@ extension CommentsViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CommentTableViewCell
-        cell.lbName.text = comments[indexPath.row].name
-        cell.lbEmail.text = comments[indexPath.row].email
-        cell.lbBody.text = comments[indexPath.row].body
+        
+        cell.setUpView(comment: comments[indexPath.row])
+        
         return cell
     }
     
