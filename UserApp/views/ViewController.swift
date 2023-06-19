@@ -11,16 +11,18 @@ import Alamofire
 class ViewController: UIViewController {
     
     var users: [UserModel] = []
-
-    let spinner = SpinnerViewController()
     
+    @IBOutlet weak var spinner:   UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
+    
+    private let homeScreenPresenter = HomeScreenPresenter()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "User List"
-        // add the spinner view controller
-        showSpinner()
+        homeScreenPresenter.attachView(view: self)
+        homeScreenPresenter.getUsers()
 
         // register tableview
         let nib = UINib(nibName: "UserTableViewCell", bundle: .main)
@@ -29,45 +31,38 @@ class ViewController: UIViewController {
         tableView.dataSource = self
     }
     
-    func showSpinner() {
-        addChild(spinner)
-        spinner.view.frame = view.frame
-        view.addSubview(spinner.view)
-        spinner.didMove(toParent: self)
-        getListUser()
-    }
-    func hideSpinnner(){
-        // then remove the spinner view controller
-        self.spinner.willMove(toParent: nil)
-        self.spinner.view.removeFromSuperview()
-        self.spinner.removeFromParent()
-    }
-    
     func showDetailScreen(user: UserModel){
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let tabbarVC = storyBoard.instantiateViewController(identifier: "TabbarViewController") as TabbarViewController
         tabbarVC.user = user
         self.navigationController?.pushViewController(tabbarVC, animated: true)
     }
-    
-    
-    func getListUser(){
-        UserProviderImpl().getUsers() { data, status, message in
-            if status == .success {
-                self.users = data as! [UserModel]
-                if  self.users.isEmpty {
-                    print("Data not found")
-                } else {
-                    self.tableView.reloadData()
-                }
-            } else {
-                print(message)
-            }
-            self.hideSpinnner()
-        }
+
+}
+
+extension ViewController: HomeScreenView {
+    func startLoading() {
+        spinner?.isHidden = false
+        spinner?.startAnimating()
     }
-
-
+    
+    func finishLoading() {
+        spinner?.stopAnimating()
+        spinner?.isHidden = true
+    }
+    
+    func updateTableView(users: [UserModel]) {
+        self.users = users
+        self.tableView.reloadData()
+    }
+    
+    func showDialog(title: String, message: String, canBeCancelled: Bool) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        if canBeCancelled {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {

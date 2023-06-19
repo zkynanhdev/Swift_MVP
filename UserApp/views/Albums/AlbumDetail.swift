@@ -12,7 +12,9 @@ class AlbumDetail: UIViewController {
     
     var albumDetails: [AlbumDetailModel] = []
     var albumId: Int? = nil
-    let spinner = SpinnerViewController()
+    
+    private let albumDetailPresenter = AlbumDetailScreenPresenter()
+    
     private let sectionInsets = UIEdgeInsets(
         top: 20.0,
       left: 10.0,
@@ -21,9 +23,12 @@ class AlbumDetail: UIViewController {
 
     @IBOutlet weak var collectionVC: UICollectionView!
     
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        showSpinner()
+        albumDetailPresenter.attachView(view: self)
+        albumDetailPresenter.getAlbumsDetail(albumId: self.albumId ?? -1)
         
         let nib = UINib(nibName: "AlbumDetailCell", bundle: .main)
         
@@ -32,36 +37,6 @@ class AlbumDetail: UIViewController {
         collectionVC.dataSource = self
     }
     
-    func showSpinner() {
-        addChild(spinner)
-        spinner.view.frame = view.frame
-        view.addSubview(spinner.view)
-        spinner.didMove(toParent: self)
-        getAlbumDetails()
-    }
-    func hideSpinnner(){
-        // then remove the spinner view controller
-        self.spinner.willMove(toParent: nil)
-        self.spinner.view.removeFromSuperview()
-        self.spinner.removeFromParent()
-    }
-    
-    func getAlbumDetails(){
-        AlbumProviderImpl().getAlbumsDetail(albumId: self.albumId ?? -1) {
-            data, status, message in
-            if status == .success {
-                self.albumDetails = data as! [AlbumDetailModel]
-                if self.albumDetails.isEmpty {
-                    print("Not found Data")
-                } else {
-                    self.collectionVC.reloadData()
-                }
-            } else {
-                print(message)
-            }
-            self.hideSpinnner()
-        }
-    }
 }
 
 extension AlbumDetail: UICollectionViewDelegate, UICollectionViewDataSource{
@@ -105,6 +80,33 @@ extension AlbumDetail: UICollectionViewDelegateFlowLayout{
           return sectionInsets.left
       }
 
+}
+
+extension AlbumDetail: AlbumDetailScreenView {
+    func updateTableView(albumDetails: [AlbumDetailModel]) {
+        self.albumDetails = albumDetails
+        self.collectionVC.reloadData()
+    }
+    
+    func startLoading() {
+        self.spinner.isHidden = false
+        self.spinner.startAnimating()
+    }
+    
+    func finishLoading() {
+        self.spinner.isHidden = true
+        self.spinner.stopAnimating()
+    }
+    
+    func showDialog(title: String, message: String, canBeCancelled: Bool) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        if canBeCancelled {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
 }
 
 

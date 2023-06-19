@@ -11,6 +11,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AlbumDetail" customModule="UserApp" customModuleProvider="target">
             <connections>
                 <outlet property="collectionVC" destination="2FV-4i-GbC" id="bob-Uz-6q9"/>
+                <outlet property="spinner" destination="Dh3-pc-eGe" id="MYL-as-moq"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -29,19 +30,28 @@
                         <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                     </collectionViewFlowLayout>
                 </collectionView>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Dh3-pc-eGe">
+                    <rect key="frame" x="178" y="407.66666666666669" width="37" height="37"/>
+                    <color key="color" systemColor="linkColor"/>
+                </activityIndicatorView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="Dh3-pc-eGe" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="5WI-lZ-iHf"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="2FV-4i-GbC" secondAttribute="trailing" id="Ez3-Xk-xf0"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="2FV-4i-GbC" secondAttribute="bottom" id="Hll-tw-udc"/>
                 <constraint firstItem="2FV-4i-GbC" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="Hxj-co-cBV"/>
                 <constraint firstItem="2FV-4i-GbC" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="pAk-cQ-cmf"/>
+                <constraint firstItem="Dh3-pc-eGe" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="xHg-cq-JJZ"/>
             </constraints>
             <point key="canvasLocation" x="13" y="20"/>
         </view>
     </objects>
     <resources>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

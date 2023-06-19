@@ -14,50 +14,22 @@ class CommentsViewController: UIViewController {
     
     var comments: [CommentModel] = []
     
-    var postId: Int = -1
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    var postId: Int?
     
-    let spinner = SpinnerViewController()
+    private let commentsPresenter = CommentsScreenPresenter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showSpinner()
+        
+        commentsPresenter.attachView(view: self)
+        commentsPresenter.getComments(id: self.postId ?? -1)
         
         // register tableview
         let nib = UINib(nibName: "CommentTableViewCell", bundle: .main)
         tableview.register(nib, forCellReuseIdentifier: "cell")
         tableview.delegate = self
         tableview.dataSource = self
-    }
-    
-    func showSpinner() {
-        addChild(spinner)
-        spinner.view.frame = view.frame
-        view.addSubview(spinner.view)
-        spinner.didMove(toParent: self)
-        getComments(postId: self.postId)
-    }
-    func hideSpinnner(){
-        // then remove the spinner view controller
-        self.spinner.willMove(toParent: nil)
-        self.spinner.view.removeFromSuperview()
-        self.spinner.removeFromParent()
-    }
-    
-    func getComments(postId: Int){
-        CommentProviderImpl().getComments(id: postId) {
-            data, status, message in
-            if status == .success {
-                self.comments = data as! [CommentModel]
-                if self.comments.isEmpty {
-                    print("Not found Data")
-                } else {
-                    self.tableview.reloadData()
-                }
-            } else {
-                print(message)
-            }
-            self.hideSpinnner()
-        }
     }
 
 }
@@ -83,4 +55,30 @@ extension CommentsViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Select \(indexPath)")
     }
+}
+
+extension CommentsViewController: CommentsScreenView {
+    func updateTableView(comments: [CommentModel]) {
+        self.comments = comments
+        self.tableview.reloadData()
+    }
+    
+    func startLoading() {
+        self.spinner.isHidden = false
+        self.spinner.startAnimating()
+    }
+    
+    func finishLoading() {
+        self.spinner.isHidden = true
+        self.spinner.stopAnimating()
+    }
+    
+    func showDialog(title: String, message: String, canBeCancelled: Bool) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        if canBeCancelled {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        self.present(alert, animated: true, completion: nil)
+    }
+    
 }

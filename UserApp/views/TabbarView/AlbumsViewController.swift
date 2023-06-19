@@ -12,8 +12,9 @@ class AlbumsViewController: UIViewController {
     
     var user: UserModel? = nil
     var albums: [AlbumModel] = []
+    private let albumPresenter = AlbumScreenPresenter()
     
-    let spinner = SpinnerViewController()
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
     
     @IBOutlet weak var tableview: UITableView!
     
@@ -21,7 +22,9 @@ class AlbumsViewController: UIViewController {
         super.viewDidLoad()
         let tbvc = self.tabBarController as! TabbarViewController
         user = tbvc.user
-        showSpinner()
+        
+        albumPresenter.attachView(view: self)
+        albumPresenter.getAlbums(id: user?.id ?? -1)
         
         
         // register tableview
@@ -29,37 +32,6 @@ class AlbumsViewController: UIViewController {
         tableview.register(nib, forCellReuseIdentifier: "cell")
         tableview.delegate = self
         tableview.dataSource = self
-    }
-    
-    func showSpinner() {
-        addChild(spinner)
-        spinner.view.frame = view.frame
-        view.addSubview(spinner.view)
-        spinner.didMove(toParent: self)
-        getListAlbums(userId: user?.id ?? 0)
-    }
-    func hideSpinnner(){
-        // then remove the spinner view controller
-        self.spinner.willMove(toParent: nil)
-        self.spinner.view.removeFromSuperview()
-        self.spinner.removeFromParent()
-    }
-    
-    func getListAlbums(userId: Int) {
-        AlbumProviderImpl().getAlbums(id: userId) {
-            data, status, message in
-            if status == .success {
-                self.albums = data as! [AlbumModel]
-                if self.albums.isEmpty {
-                    print("Not found Data")
-                } else {
-                    self.tableview.reloadData()
-                }
-            } else {
-                print(message)
-            }
-            self.hideSpinnner()
-        }
     }
 
 }
@@ -86,5 +58,30 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource{
         let albumDetailVc = AlbumDetail()
         albumDetailVc.albumId = albums[indexPath.row].id
         self.navigationController?.pushViewController(albumDetailVc, animated: true)
+    }
+}
+
+extension AlbumsViewController: AlbumScreenView {
+    func startLoading() {
+        self.spinner.isHidden = false
+        self.spinner.startAnimating()
+    }
+    
+    func finishLoading() {
+        self.spinner.stopAnimating()
+        self.spinner.isHidden = true
+    }
+    
+    func updateTableView(albums: [AlbumModel]) {
+        self.albums = albums
+        self.tableview.reloadData()
+    }
+    
+    func showDialog(title: String, message: String, canBeCancelled: Bool) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        if canBeCancelled {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        self.present(alert, animated: true, completion: nil)
     }
 }

@@ -13,53 +13,25 @@ class PostViewController: UIViewController {
     var user: UserModel? = nil
     var posts: [PostModel] = []
     
-    let spinner = SpinnerViewController()
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    private let postPresenter = PostScreenPresenter()
     @IBOutlet weak var tableView: UITableView!
     
-    func showSpinner() {
-        addChild(spinner)
-        spinner.view.frame = view.frame
-        view.addSubview(spinner.view)
-        spinner.didMove(toParent: self)
-        getPosts(userId: user?.id ?? -1)
-    }
-    func hideSpinnner(){
-        // then remove the spinner view controller
-        self.spinner.willMove(toParent: nil)
-        self.spinner.view.removeFromSuperview()
-        self.spinner.removeFromParent()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         let tbvc = self.tabBarController as! TabbarViewController
-        user = tbvc.user
-        showSpinner()
+        self.user = tbvc.user
+        
+        // fetch data
+        postPresenter.attachView(view: self)
+        postPresenter.getPosts(id: user?.id ?? -1)
         
         // register tableview
         let nib = UINib(nibName: "PostTableViewCell", bundle: .main)
         tableView.register(nib, forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
-    }
-    
-    
-    func getPosts(userId: Int) {
-        PostProviderImpl().getPosts(id: userId) {
-            data, status, message in
-            if status == .success {
-                self.posts = data as! [PostModel]
-                if self.posts.isEmpty {
-                    print("Not found Data")
-                } else {
-                    self.tableView.reloadData()
-                }
-            } else {
-                print(message)
-            }
-            self.hideSpinnner()
-        }
     }
 
 }
@@ -99,6 +71,31 @@ extension PostViewController: PostCellDelegate {
         self.present(commentVc, animated: true)
     }
     
+}
+
+extension PostViewController: PostScreenView {
+    func startLoading() {
+        self.spinner.isHidden = false
+        self.spinner.startAnimating()
+    }
+    
+    func finishLoading() {
+        self.spinner.stopAnimating()
+        self.spinner.isHidden = true
+    }
+    
+    func updateTableView(posts: [PostModel]) {
+        self.posts = posts
+        self.tableView.reloadData()
+    }
+    
+    func showDialog(title: String, message: String, canBeCancelled: Bool) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        if canBeCancelled {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 

@@ -38,12 +38,18 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <activityIndicatorView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" id="lN6-T0-91e">
+                                <rect key="frame" x="16" y="404" width="361" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="color" systemColor="linkColor"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="yvW-C0-8qx"/>
                     <connections>
+                        <outlet property="spinner" destination="lN6-T0-91e" id="Lqd-77-rPH"/>
                         <outlet property="tableView" destination="7OS-WH-YyN" id="A7e-Wi-8a1"/>
                     </connections>
                 </viewController>
@@ -63,6 +69,11 @@
                                 <rect key="frame" x="0.0" y="59" width="393" height="710"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" id="Hrc-hP-3OF">
+                                <rect key="frame" x="0.0" y="404" width="393" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="color" systemColor="linkColor"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pi6-u8-FEr"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -77,6 +88,7 @@
                         <imageReference key="image" image="list.bullet.rectangle" catalog="system" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
+                        <outlet property="spinner" destination="Hrc-hP-3OF" id="pe5-OX-TU1"/>
                         <outlet property="tableView" destination="4o2-vi-g35" id="QDc-03-DSt"/>
                     </connections>
                 </viewController>
@@ -96,6 +108,11 @@
                                 <rect key="frame" x="0.0" y="59" width="393" height="710"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" id="iXv-Zo-Pau">
+                                <rect key="frame" x="0.0" y="404" width="393" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="color" systemColor="linkColor"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tZr-Vs-Iwg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -110,6 +127,7 @@
                         <imageReference key="image" image="folder" catalog="system" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
+                        <outlet property="spinner" destination="iXv-Zo-Pau" id="pHi-lE-I1g"/>
                         <outlet property="tableview" destination="0Jz-eE-IQx" id="6GX-Up-Uet"/>
                     </connections>
                 </viewController>
@@ -139,6 +157,9 @@
     <resources>
         <image name="folder" catalog="system" width="128" height="96"/>
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
